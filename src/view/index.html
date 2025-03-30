@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 1rem;}
+        #prompt {width: 100%; box-sizing: border-box;}
+        #response { border: 1px solid #ccc; margin-top: 1rem; padding: 0.5rem; min-height: 100%;}
+    </style>
+    <body>
+        <h2>Chat</h2>
+        <textarea name="" id="prompt" rows="3" placeholder="Ask Something"></textarea><br/>
+        <button id="askBtn">Ask</button>
+        <div id="response"></div>
+    </body>
+
+</head>
+
+<script>
+    const vscode = vscode = acquireVsCodeApi();
+
+    document.getElementById('askBtn').addEventListener('click', () =>{
+        const text = document.getElementById('prompt').value;
+        vscode.postMessage({command: 'chat', text});
+    });
+
+    window.addEventListener('message', event => {
+        const {command, text} = event.data;
+        if(command == 'chatResponse') {
+            document.getElementById('response').innerText = text;
+        }
+    });
+
+</script>
+
+</html>

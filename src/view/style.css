@@ -1,0 +1,56 @@
+body {
+    font-family: var(--vscode-font-family, sans-serif);
+    margin: 1rem;
+    color: var(--vscode-editor-foreground);
+    background-color: var(--vscode-editor-background);
+  }
+  #prompt {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+    padding: 0.4rem;
+    border: 1px solid var(--vscode-input-border, #ccc);
+    background-color: var(--vscode-input-background, #fff);
+    color: var(--vscode-input-foreground, #000);
+  }
+  button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background-color: var(--vscode-button-background, #007acc);
+    color: var(--vscode-button-foreground, #fff);
+  }
+  button:hover {
+    background-color: var(--vscode-button-hoverBackground, #005a9e);
+  }
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  #response {
+    border: 1px solid var(--vscode-editorWidget-border, #ccc);
+    margin-top: 1rem;
+    padding: 0.5rem;
+    min-height: 100px;
+    word-wrap: break-word;
+    background-color: var(--vscode-textBlockQuote-background, #f0f0f0);
+  }
+  .loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: var(--vscode-button-background, #007acc);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    margin-top: 10px;
+  }
+  @keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .hidden {
+    display: none;
+  }
+  

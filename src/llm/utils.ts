@@ -1,3 +1,5 @@
+import { SystemMessage, HumanMessage, AIMessage } from '@langchain/core/messages'
+
 export async function getOllama() {
     const ollama = await import("ollama");
     return ollama.default;
@@ -13,6 +15,22 @@ export async function listOllamaModels(): Promise<{ provider: string, name: stri
     }
     return result;
 }
+
+
+export function convertToLangchainMessages(inputMessages: Array<{ role: string; content: string }>) {
+    return inputMessages.map(msg => {
+      switch (msg.role.toLowerCase()) {
+        case 'system':
+          return new SystemMessage(msg.content);
+        case 'user':
+          return new HumanMessage(msg.content);
+        case 'assistant':
+          return new AIMessage(msg.content);
+        default:
+          throw new Error(`Unknown role: ${msg.role}`);
+      }
+    });
+  }
 
 export async function* simpleMessage(message: string): AsyncIterable<string> {
     yield message;
@@ -42,10 +60,12 @@ export async function* transformToWords(
         } else {
             text = String(chunk);
         }
-        // Split the text by spaces and filter out any empty entries.
-        const words = text.split(" ").filter(word => word.length > 0);
-        for (const word of words) {
-            yield word;
+
+        // Use a regular expression to match words and spaces
+        const wordsAndSpaces = text.match(/\S+|\s+/g) || [];
+        
+        for (const part of wordsAndSpaces) {
+            yield part;
             await delay(delayMs);
         }
     }

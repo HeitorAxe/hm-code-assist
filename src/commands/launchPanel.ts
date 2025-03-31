@@ -8,7 +8,7 @@ import { listOllamaModels } from "../llm/utils";
 export function registerLaunchPanel(context: vscode.ExtensionContext): vscode.Disposable {
     return vscode.commands.registerCommand("hm-code-assist.launchPanel", async () => {
         const panel = vscode.window.createWebviewPanel(
-            "deepChat",
+            "AIChat",
             "AI Chat",
             vscode.ViewColumn.Two,
             { enableScripts: true, retainContextWhenHidden: true }
@@ -35,31 +35,42 @@ export function registerLaunchPanel(context: vscode.ExtensionContext): vscode.Di
             }
         });
 
+        const messages = [
+            { role: 'system', content: 'You are a thinking model, before giving the final response, think about the subject using the thinking tags: <think>I think I will do that!</think>\n I will do that!' },
+        ]
         //TODO treat possible errors, decide where to put api key retrieval
         //find a way to add models via config
         //throw error in case there is no ollama, treat this case
         //add timeout
         //add messagin tracker
+
         panel.webview.onDidReceiveMessage(async (message: any) => {
             if (message.command === "chat") {
                 const userPrompt = message.text;
+                messages.push({
+                    role: 'user',
+                    content: userPrompt
+                });
                 const model = message.model;
                 let responseText = "";
                 let requestComplete = false; // Flag to track completion
-                let messages = []
                 try {
                     
                     const streamResponse = await fetchLlmResponse({
                         provider: model.provider,
                         model: model.name,
-                        userPrompt: userPrompt
+                        messages: messages
                     }, context);
 
                     for await (const part of streamResponse) {
-                        responseText += part+" ";
+                        responseText += part;
                         panel.webview.postMessage({ command: "chatResponse", text: responseText });
                     }
                     requestComplete = true;
+                    messages.push({
+                        role: 'assistant',
+                        content: responseText
+                    })
 
                 } 
                 catch (err: any) {

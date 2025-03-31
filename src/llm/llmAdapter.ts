@@ -1,6 +1,6 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import * as vscode from "vscode";
-import { getOllama, transformToWords, simpleMessage } from "./utils";
+import { getOllama, transformToWords, simpleMessage, convertToLangchainMessages } from "./utils";
 
 
 /**
@@ -11,17 +11,16 @@ export async function fetchLlmResponse(
     request: {
         provider: string,
         model: string,
-        userPrompt: string,
-        messages?: [{
+        messages: {
             role: string,
             content: string
-        }]
+        }[]
     },
     context: vscode.ExtensionContext,
     delayMs: number = 5
 ): Promise<AsyncIterable<string>>
 {
-    const { provider, model, userPrompt, messages } = request;
+    const { provider, model, messages } = request;
 
     if (provider === "google") {
         const apiKey = await context.secrets.get("googleApiKey");
@@ -33,8 +32,9 @@ export async function fetchLlmResponse(
             model: model,
             temperature: 0,
             apiKey: apiKey,
+            
         });
-        const streamResponse = await llm.stream(userPrompt);
+        const streamResponse = await llm.stream(convertToLangchainMessages(messages));
         return transformToWords(streamResponse, delayMs);
     }
 
@@ -42,12 +42,12 @@ export async function fetchLlmResponse(
         const ollama = await getOllama();
         const streamResponse = await ollama.chat({
             model: model,
-            messages: [{ role: "user", content: userPrompt }],
+            messages: messages,
             stream: true,
         });
         return transformToWords(streamResponse, delayMs);
     }
-    
+
     else {
         return transformToWords(simpleMessage("This model is not available"), delayMs);
     }

@@ -61,19 +61,41 @@
         const { command, text, data } = event.data;
         switch(command){
             case 'chatResponse':
+                //simple think tag treatment
+                result  = parseThinkTags(text);
+                think = result.insideThink;
+                console.log("think: "+think);
+                response = result.outsideThink;
+                console.log("outside: "+response);
+
+
                 // Sanitize and parse markdown
-                const unsafeHtml = marked.parse(text);
+                const unsafeHtml = marked.parse(response);
                 const safeHtml = DOMPurify.sanitize(unsafeHtml);
                 
                 const lastMessage = messageGroup.lastElementChild;
                 
+                let assistantMessage = ''
+
                 if(!lastMessage?.classList.contains('assistant-message')){
-                    const assistantMessage = document.createElement('div');
+                    assistantMessage = document.createElement('div');
                     assistantMessage.className = 'assistant-message';
-                    assistantMessage.innerHTML = safeHtml;
+                    assistantMessage.innerHTML = safeHtml;                    
                     messageGroup.appendChild(assistantMessage)
                 } else {
-                    messageGroup.lastElementChild.innerHTML = safeHtml;
+                    assistantMessage = messageGroup.lastElementChild
+                    assistantMessage.innerHTML = safeHtml;
+                }
+
+                //adding think element to the top
+                if(think && assistantMessage.querySelector(`.think`)==null){
+                    const thinkElement = document.createElement('div');
+                    thinkElement.className = 'think';
+                    thinkElement.innerText = think;
+                    assistantMessage.insertBefore(thinkElement, assistantMessage.firstChild);
+                }else if(think){
+                    const thinkElement = assistantMessage.querySelector(`.think`)[0];
+                    thinkElement.innerText = think;
                 }
                 
                 // Apply syntax highlighting
@@ -105,5 +127,42 @@
         }
     });
 
-
+    function parseThinkTags(input) {
+        let insideThink = '';
+        let outsideThink = '';
+        let lastIndex = 0;
+        const regex = /<think>([\s\S]*?)(<\/think>|$)/g;
+        let match;
+    
+        while ((match = regex.exec(input)) !== null) {
+            // Add content before the current <think> to outsideThink
+            if (match.index > lastIndex) {
+                outsideThink += input.slice(lastIndex, match.index);
+            }
+    
+            // Add the content inside <think> (whether closed or not)
+            insideThink += match[1];
+    
+            // Update lastIndex to end of match (either </think> or end of input)
+            lastIndex = regex.lastIndex;
+            
+            // If the tag wasn't closed, stop processing to prevent missing subsequent tags
+            if (!match[2]) break;
+        }
+    
+        // Handle any remaining content after last match
+        if (lastIndex < input.length) {
+            outsideThink += input.slice(lastIndex);
+        }
+    
+        return {
+            insideThink,
+            outsideThink
+        };
+    }
+    
+    
+      
+    
+    
 })();

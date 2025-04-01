@@ -65,8 +65,10 @@ export async function* transformToWords(
         const wordsAndSpaces = text.match(/\S+|\s+/g) || [];
         
         for (const part of wordsAndSpaces) {
-            yield part;
-            await delay(delayMs);
+            for(const letter of part){
+                yield letter;
+                await delay(delayMs);
+            }
         }
     }
 }

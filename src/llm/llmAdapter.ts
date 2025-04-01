@@ -17,7 +17,7 @@ export async function fetchLlmResponse(
         }[]
     },
     context: vscode.ExtensionContext,
-    delayMs: number = 5
+    delayMs: number = 2
 ): Promise<AsyncIterable<string>>
 {
     const { provider, model, messages } = request;

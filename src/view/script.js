@@ -3,8 +3,10 @@
     const askBtn = document.getElementById('askBtn');
     const promptInput = document.getElementById('prompt');
     const loader = document.getElementById('loader');
+    const chatBox = document.getElementsByClassName('chat-container')[0];
     const messageGroup = document.getElementsByClassName('message-group')[0];
     const createAllBtn = document.getElementById('createAllBtn');
+    let userScrolled = false;
     
     // Function to update Create All button visibility
     const updateCreateAllVisibility = () => {
@@ -18,6 +20,16 @@
     // Observe DOM changes for new file buttons
     const observer = new MutationObserver(updateCreateAllVisibility);
     observer.observe(document.body, { subtree: true, childList: true });
+
+    //control auto scroll
+    chatBox.addEventListener("scroll", (event) => {
+        const element = event.target;
+        if (element.scrollTop + element.clientHeight < element.scrollHeight) {
+            userScrolled = true;
+        } else {
+            userScrolled = false;
+        }
+    });
 
     // Create All button handler
     createAllBtn.addEventListener('click', () => {
@@ -163,7 +175,10 @@
         const { command, text, data } = event.data;
         switch(command){
             case 'chatResponse':
-                console.log(text);
+                //console.log(text);
+                if(!userScrolled){
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
                 const result = parseThinkTags(text);
                 const think = result.insideThink;
                 const response = result.outsideThink;
@@ -190,6 +205,7 @@
                     assistantMessage = messageGroup.lastElementChild;
                     assistantMessage.innerHTML = safeHtml;
                 }
+                
 
                 // Add think element if present
                 if(think && assistantMessage.querySelector('.think') === null){

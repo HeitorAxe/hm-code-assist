@@ -47,6 +47,23 @@ export function registerLaunchPanel(context: vscode.ExtensionContext): vscode.Di
                         <fp>suggested/file/path<\\fp>
                         print("hello world!")
                         \`\`\`
+
+                        Another example:
+                        \`\`\`html
+                        <fp>suggested/file/path<\\fp>
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Simple html</title>
+                            <link rel="stylesheet" href="style.css">
+                        </head>
+                        <body>
+
+                        </body>
+                        </html>
+                        \`\`\`
                 ` 
             },
         ]

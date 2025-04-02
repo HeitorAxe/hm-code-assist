@@ -47,5 +47,10 @@
     "@langchain/google-genai": "^0.2.0",
     "@vscode/vsce": "^3.3.2",
     "ollama": "^0.5.14"
-  }
+  },
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/HeitorAxe/hm-code-assist.git"
+}
+
 }

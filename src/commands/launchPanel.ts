@@ -136,13 +136,19 @@ function getWebViewContent(context: vscode.ExtensionContext, panel: vscode.Webvi
     const mediaPath = vscode.Uri.joinPath(context.extensionUri, "view");
 
     const styleUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(mediaPath, "style.css"));
-    const scriptUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(mediaPath, "script.js"));
+    const scriptUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(mediaPath, "scripts/script.js"));
+    const highlightUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(mediaPath, "scripts/highlight.min.js"));
+    const markedUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(mediaPath, "scripts/marked.min.js"));
+    const purifyUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(mediaPath, "scripts/purify.min.js"));
 
     const htmlPath = vscode.Uri.joinPath(mediaPath, "index.html");
     let html = fs.readFileSync(htmlPath.fsPath, "utf8");
 
     html = html.replace(/\${styleUri}/g, styleUri.toString());
     html = html.replace(/\${scriptUri}/g, scriptUri.toString());
+    html = html.replace(/\${markedUri}/g, markedUri.toString());
+    html = html.replace(/\${highlightUri}/g, highlightUri.toString());
+    html = html.replace(/\${purifyUri}/g, purifyUri.toString());
     html = html.replace(/\${webview.cspSource}/g, panel.webview.cspSource);
 
     return html;

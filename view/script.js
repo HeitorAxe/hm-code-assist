@@ -7,31 +7,40 @@
     const messageGroup = document.getElementsByClassName('message-group')[0];
     const createAllBtn = document.getElementById('createAllBtn');
     let userScrolled = false;
+    const scrollThreshold = 5;//pixels
     
-    // Function to update Create All button visibility
+    //function to update Create All button visibility
     const updateCreateAllVisibility = () => {
         const hasFiles = document.querySelectorAll('.gen-file-btn').length > 0;
         createAllBtn.style.display = hasFiles ? 'block' : 'none';
     };
 
-    // Initial visibility check
+    //initial visibility check
     updateCreateAllVisibility();
     
-    // Observe DOM changes for new file buttons
+    //observe dom changes for new file buttons
     const observer = new MutationObserver(updateCreateAllVisibility);
     observer.observe(document.body, { subtree: true, childList: true });
 
     //control auto scroll
     chatBox.addEventListener("scroll", (event) => {
-        const element = event.target;
-        if (element.scrollTop + element.clientHeight < element.scrollHeight) {
+        const element = event.target;    
+        const distanceToBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+    
+        if (distanceToBottom > scrollThreshold) {
+            if (!userScrolled) {
+                 console.log("User scrolled up from bottom area.");
+            }
             userScrolled = true;
         } else {
+            if (userScrolled) {
+                 console.log("User scrolled back to bottom area.");
+            }
             userScrolled = false;
         }
     });
 
-    // Create All button handler
+    //create All button functionality
     createAllBtn.addEventListener('click', () => {
         const files = [];
         
@@ -61,7 +70,7 @@
         }
     });
 
-    // Configure marked.js
+    //configure marked.js
     marked.setOptions({
         highlight: function(code, lang) {
             if (lang && hljs.getLanguage(lang)) {
@@ -72,7 +81,7 @@
         langPrefix: 'hljs language-'
     });
     
-    // Configure DOMPurify to allow fp class
+    //configure domPurify to allow fp class
     DOMPurify.addHook('afterSanitizeAttributes', function(node) {
         if (node.tagName === 'CODE') {
             node.setAttribute('class', 'hljs ' + (node.getAttribute('class') || ''));
@@ -83,33 +92,26 @@
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = html;
         
-        // Process all code blocks
         tempDiv.querySelectorAll('pre code').forEach(codeBlock => {
-            // Get raw HTML content including syntax highlighting
             const codeHtml = codeBlock.innerHTML;
-            
-            // Enhanced regex pattern to match all tag variations
             const fpRegex = /(&lt;fp&gt;|&lt;FP&gt;|<fp>|<FP>)(.*?)(&lt;\/?\\?fp&gt;|&lt;\/?\\?FP&gt;|<\/fp>|<\/FP>)/gi;
             let match;
             
             while ((match = fpRegex.exec(codeHtml)) !== null) {
                 const fileName = match[2].trim();
                 const preElement = codeBlock.closest('pre');
-                const codeBlockId = generateUUID(); // Make sure this is defined elsewhere
+                const codeBlockId = generateUUID();
     
-                // Create file path element
                 const fpElement = document.createElement('div');
                 fpElement.className = 'fp';
                 fpElement.textContent = fileName;
                 fpElement.id = "fp-" + codeBlockId;
     
-                // Create generation button
                 const button = document.createElement('button');
                 button.className = 'gen-file-btn';
                 button.id = "genFileBtn-" + codeBlockId;
                 button.textContent = "Create File";
                 button.addEventListener('click', () => {
-                    // Get clean code content without any tags
                     const cleanCode = codeBlock.textContent
                         .replace(fpRegex, '')
                         .trim();
@@ -124,14 +126,12 @@
                 
                 fpElement.appendChild(button);
                 
-                // Insert before the code block
                 if (preElement.parentNode) {
                     preElement.parentNode.insertBefore(fpElement, preElement);
                     preElement.id = "pre-" + codeBlockId;
                 }
             }
     
-            // Clean the code content while preserving highlighting
             codeBlock.innerHTML = codeHtml
                 .replace(fpRegex, '')
                 .trim();
@@ -183,16 +183,12 @@
                 const think = result.insideThink;
                 const response = result.outsideThink;
 
-                // First parse markdown
                 const unsafeHtml = marked.parse(response);
                 
-                // Process fp tags by extracting them from code blocks
                 const processedHtml = processFpTags(unsafeHtml);
                 
-                // Sanitize the final HTML
                 const safeHtml = DOMPurify.sanitize(processedHtml);
                 
-                // Handle message display
                 const lastMessage = messageGroup.lastElementChild;
                 let assistantMessage = '';
 
@@ -201,13 +197,15 @@
                     assistantMessage.className = 'assistant-message';
                     assistantMessage.innerHTML = safeHtml;                    
                     messageGroup.appendChild(assistantMessage);
+
+                    userScrolled=false
                 } else {
                     assistantMessage = messageGroup.lastElementChild;
                     assistantMessage.innerHTML = safeHtml;
                 }
                 
 
-                // Add think element if present
+                //add think element if present
                 if(think && assistantMessage.querySelector('.think') === null){
                     const thinkElement = document.createElement('div');
                     thinkElement.className = 'think';
@@ -218,32 +216,26 @@
                     thinkElement.innerText = think;
                 }
                 
-                // Apply syntax highlighting
+                //apply syntax highlighting to generated codeblocl
                 document.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
 
                 //adding create file btn functionality
                 document.querySelectorAll('.gen-file-btn:not([data-listener-added])').forEach(button => {
-                    // Mark the button as processed
                     button.dataset.listenerAdded = "true";
                     
                     button.addEventListener('click', (event) => {
-                        // 1. Get UUID from button ID
                         const uuid = button.id.replace('genFileBtn-', '');
                         
-                        // 2. Find matching <pre> element
                         const pre = document.querySelector(`#pre-${uuid} code`);
                         if (!pre) {
                             console.error('Code element not found');
                             return;
                         }
-                        
-                        // 3. Get filename from parent div's text
                         const parentDiv = button.closest('.fp');
                         const filePath = parentDiv?.firstChild?.textContent?.trim() || 'code.txt';
                         
-                        // 4. Extract raw text content
                         const rawCode = pre.textContent;
                         
                         vscode.postMessage({ 

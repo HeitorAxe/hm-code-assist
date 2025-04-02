@@ -36,15 +36,10 @@ export async function* simpleMessage(message: string): AsyncIterable<string> {
     yield message;
 }
 
-// A delay function to pause execution for a given number of milliseconds.
 export function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/**
- * Transforms any async iterable response into a stream that yields one word at a time.
- * The function handles responses that are strings or objects with `message` or `content` properties.
- */
 export async function* transformToWords(
     stream: AsyncIterable<any>,
     delayMs: number
@@ -61,7 +56,6 @@ export async function* transformToWords(
             text = String(chunk);
         }
 
-        // Use a regular expression to match words and spaces
         const wordsAndSpaces = text.match(/\S+|\s+/g) || [];
         
         for (const part of wordsAndSpaces) {
@@ -71,4 +65,22 @@ export async function* transformToWords(
             }
         }
     }
+}
+
+export function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            reject(new Error("Operation timed out"));
+        }, ms);
+        promise.then(
+            (value) => {
+                clearTimeout(timer);
+                resolve(value);
+            },
+            (err) => {
+                clearTimeout(timer);
+                reject(err);
+            }
+        );
+    });
 }

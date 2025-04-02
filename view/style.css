@@ -1,0 +1,443 @@
+:root {
+  /* Core VS Code Colors */
+  --vscode-background: var(--vscode-editor-background, #1e1e1e);
+  --vscode-foreground: var(--vscode-editor-foreground, #d4d4d4);
+  --vscode-input-background: var(--vscode-input-background, #3c3c3c);
+  --vscode-input-foreground: var(--vscode-input-foreground, #cccccc);
+  --vscode-widget-background: var(--vscode-editorWidget-background, #252526); /* Used for Assistant messages */
+  --vscode-button-background: var(--vscode-button-background, #0e639c);
+  --vscode-button-foreground: var(--vscode-button-foreground, #ffffff);
+  --vscode-button-secondary-background: var(--vscode-button-secondaryBackground, #3a3d41);
+  --vscode-button-secondary-foreground: var(--vscode-button-secondaryForeground, #ffffff);
+  --vscode-button-secondary-hover-background: var(--vscode-button-secondaryHoverBackground, #45494e);
+  --vscode-focus-border: var(--vscode-focusBorder, #007fd4);
+  --vscode-text-code-block-background: #0a0a0a; /* Often darker */
+  --vscode-list-hover-background: var(--vscode-list-hoverBackground, #2a2d2e);
+  --vscode-scrollbar-slider-background: var(--vscode-scrollbarSlider-background, #66666680); /* Semi-transparent */
+  --vscode-scrollbar-slider-hover-background: var(--vscode-scrollbarSlider-hoverBackground, #77777780);
+  --vscode-scrollbar-slider-active-background: var(--vscode-scrollbarSlider-activeBackground, #99999980);
+
+  /* Original syntax highlighting variables (unchanged) */
+  --vscode-syntax-keyword: var(--vscode-editor-keyword-foreground, #569CD6);
+  --vscode-syntax-function: var(--vscode-editor-function-foreground, #DCDCAA);
+  --vscode-syntax-string: var(--vscode-editor-string-foreground, #CE9178);
+  --vscode-syntax-comment: var(--vscode-editor-comment-foreground, #6A9955);
+  --vscode-syntax-number: var(--vscode-editor-number-foreground, #B5CEA8);
+  --vscode-syntax-type: var(--vscode-editor-type-foreground, #4EC9B0);
+  --vscode-syntax-parameter: var(--vscode-editor-parameter-foreground, #9CDCFE);
+  --vscode-syntax-variable: var(--vscode-editor-variable-foreground, #9CDCFE);
+
+  /* New design variables */
+  --border-radius: 6px; /* Slightly reduced for a tighter feel */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1); /* Softer shadow */
+  --shadow-md: 0 2px 6px rgba(0,0,0,0.12); /* Softer shadow */
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  margin: 0;
+  padding: 20px; /* Increased padding */
+  height: calc(100vh - 40px); /* Adjust height calculation */
+  background-color: var(--vscode-background);
+  color: var(--vscode-foreground);
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Increased gap */
+  font-family: var(--vscode-font-family);
+  line-height: 1.6;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px; /* Reduced padding, no border */
+  /* Removed border-bottom */
+}
+
+.model-selector {
+  padding: 8px 14px; /* Slightly more padding */
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: none; /* Removed border */
+  border-radius: var(--border-radius);
+  font-size: 13px;
+  transition: var(--transition);
+}
+
+.model-selector:hover {
+  /* Optional: Slightly darker/lighter on hover for feedback */
+  background-color: var(--vscode-list-hover-background);
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--vscode-input-background); /* Distinct background */
+  border-radius: var(--border-radius);
+  /* Removed border */
+  padding: 20px; /* Increased padding */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Consistent gap */
+  box-shadow: var(--shadow-sm); /* Subtle shadow for depth */
+}
+
+.message-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Consistent gap */
+}
+
+.user-message, .assistant-message {
+  max-width: 85%; /* Slightly increased max-width */
+  padding: 14px 18px; /* Increased padding */
+  border-radius: var(--border-radius);
+  line-height: 1.6;
+  position: relative; /* Keep for potential future adornments, but no tails */
+  box-shadow: var(--shadow-sm); /* Add subtle shadow to messages */
+}
+
+.user-message {
+  background-color: var(--vscode-button-background); /* Use button bg for high contrast */
+  color: var(--vscode-button-foreground);
+  align-self: flex-end;
+  /* Removed margin-right */
+  /* Removed ::after tail */
+}
+
+.assistant-message {
+  background-color: var(--vscode-widget-background); /* Use widget background */
+  color: var(--vscode-foreground); /* Ensure readable text on widget bg */
+  border: none; /* Removed border */
+  align-self: flex-start;
+  /* Removed margin-left */
+  /* Removed ::before tail */
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  background: var(--vscode-input-background); /* Same as chat container */
+  border-radius: var(--border-radius);
+  /* Removed border */
+  /* Removed box-shadow, relies on body gap and chat container shadow */
+  padding: 4px; /* Add slight padding around textarea */
+}
+
+#prompt {
+  flex: 1;
+  padding: 12px 48px 12px 16px; /* Adjusted padding */
+  background: transparent; /* Makes it blend with input-container */
+  color: var(--vscode-input-foreground);
+  border: none; /* Ensure no border */
+  border-radius: calc(var(--border-radius) - 2px); /* Inner radius */
+  resize: none;
+  min-height: 48px; /* Keep min-height */
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none; /* Remove default outline */
+}
+
+#prompt:focus {
+  /* Subtle background change on focus instead of border/shadow */
+  background-color: var(--vscode-widget-background); /* Slightly different background */
+}
+
+.send-button {
+  position: absolute;
+  right: 10px; /* Adjusted position */
+  bottom: 10px; /* Adjusted position */
+  background: var(--vscode-button-background);
+  border: none;
+  cursor: pointer;
+  padding: 7px; /* Slightly larger click target */
+  border-radius: calc(var(--border-radius) - 2px);
+  color: var(--vscode-button-foreground);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm); /* Add shadow */
+}
+
+.send-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md); /* Increase shadow on hover */
+  filter: brightness(1.1); /* Slight brightness increase */
+}
+
+.send-button:focus-visible {
+  outline: 2px solid var(--vscode-focus-border);
+  outline-offset: 1px;
+}
+
+.send-icon {
+  width: 18px; /* Slightly smaller icon */
+  height: 18px;
+  fill: currentColor;
+}
+
+.loader {
+  height: 2px;
+  width: 120px;
+  margin: 8px auto; /* Add margin */
+  background: var(--vscode-input-background); /* Use input bg for track */
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loader::before {
+  content: '';
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: var(--vscode-syntax-comment); /* Keep comment color for progress */
+  animation: loaderSlide 1.4s cubic-bezier(0.65,0.05,0.36,1) infinite;
+}
+
+@keyframes loaderSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+.hidden {
+  display: none;
+}
+
+/* Syntax Highlighting - Use distinct background */
+.assistant-message pre {
+  background-color: var(--vscode-text-code-block-background) !important; /* Use dedicated code block bg */
+  border-radius: var(--border-radius); /* Consistent radius */
+  padding: 14px; /* Slightly more padding */
+  overflow-x: auto;
+  margin: 12px 0; /* Increased margin */
+  border: none; /* Removed border */
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); /* Subtle inset shadow */
+}
+
+.assistant-message code {
+  font-family: var(--vscode-editor-font-family);
+  font-size: var(--vscode-editor-font-size);
+  line-height: 1.4;
+  /* Color should be handled by hljs rules */
+}
+
+/* HLJS Rules (largely unchanged, ensuring background transparency) */
+.hljs {
+  background: transparent !important; /* Ensure transparency */
+  color: var(--vscode-foreground) !important; /* Default code color */
+}
+
+.hljs-keyword,
+.hljs-built_in { color: var(--vscode-syntax-keyword) !important; }
+.hljs-title,
+.hljs-function { color: var(--vscode-syntax-function) !important; }
+.hljs-string,
+.hljs-regexp { color: var(--vscode-syntax-string) !important; }
+.hljs-comment { color: var(--vscode-syntax-comment) !important; font-style: italic; }
+.hljs-number { color: var(--vscode-syntax-number) !important; }
+.hljs-type,
+.hljs-class { color: var(--vscode-syntax-type) !important; }
+.hljs-params { color: var(--vscode-syntax-parameter) !important; }
+.hljs-variable { color: var(--vscode-syntax-variable) !important; }
+.hljs-meta { opacity: 0.7; }
+
+
+/* Think animation (unchanged conceptually, adjusted styles) */
+.think {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: var(--border-radius);
+  margin: 8px 0;
+  background-color: var(--vscode-widget-background); /* Align with assistant msg bg */
+  opacity: 0.7; /* Slightly reduced base opacity */
+  border: none; /* Removed border */
+  align-self: flex-start;
+  color: var(--vscode-syntax-comment);
+  font-style: italic;
+  animation: subtle-pulse 2s ease-in-out infinite;
+  box-shadow: var(--shadow-sm);
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.5; } /* Deeper pulse */
+}
+
+/* File Path Display */
+.fp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 13px;
+  color: var(--vscode-foreground); /* Use standard foreground */
+  background-color: var(--vscode-widget-background); /* Consistent background */
+  padding: 10px 14px; /* Adjusted padding */
+  border-radius: var(--border-radius);
+  margin-bottom: 12px;
+  border: none; /* Removed border */
+  transition: var(--transition);
+  box-sizing: border-box;
+}
+
+.fp:hover {
+  background-color: var(--vscode-list-hover-background); /* Use list hover */
+}
+
+/* Generate File Button (Single) */
+.gen-file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px; /* Adjusted padding */
+  border-radius: calc(var(--border-radius) - 1px);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--vscode-button-secondary-foreground);
+  background-color: var(--vscode-button-secondary-background);
+  border: none; /* Removed border */
+  transition: var(--transition);
+  margin-left: auto; /* Pushes button to the right */
+  box-shadow: var(--shadow-sm);
+}
+
+.gen-file-btn:hover {
+  background-color: var(--vscode-button-secondary-hover-background);
+  color: var(--vscode-button-secondary-foreground);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.gen-file-btn:active {
+  transform: translateY(0px);
+  filter: brightness(0.95);
+}
+
+.gen-file-btn::before {
+  content: "🡢";
+  font-family: initial;
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.gen-file-btn:hover::before {
+  transform: translateX(2px);
+}
+
+.gen-file-btn:focus-visible {
+  outline: 2px solid var(--vscode-focus-border);
+  outline-offset: 1px;
+}
+
+/* Generate All Files Button */
+.gen-all-file-btn {
+  padding: 8px 16px; /* Increased padding */
+  background: var(--vscode-button-secondary-background);
+  color: var(--vscode-button-secondary-foreground);
+  border: none; /* Removed border */
+  border-radius: var(--border-radius); /* Match other elements */
+  font-family: var(--vscode-font-family);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.gen-all-file-btn:hover {
+  background: var(--vscode-button-secondary-hover-background);
+  box-shadow: var(--shadow-md);
+  /* Keep subtle bounce or remove if too distracting */
+  /* animation: subtle-bounce 0.8s ease infinite; */
+}
+
+.gen-all-file-btn::before {
+  content: "✨";
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.gen-all-file-btn:hover::before {
+   transform: rotate(15deg) scale(1.1); /* Adjusted hover effect */
+}
+
+.gen-all-file-btn:active {
+  transform: scale(0.98);
+  filter: brightness(0.95);
+}
+
+.gen-all-file-btn:focus-visible {
+  outline: 2px solid var(--vscode-focus-border);
+  outline-offset: 1px;
+}
+
+/* Removed focus ::after pseudo-element */
+
+/* Message entrance animation (unchanged) */
+@keyframes messageEntrance {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.user-message, .assistant-message {
+  animation: messageEntrance 0.3s ease-out;
+}
+
+/* Improved Scrollbar - Using theme variables */
+.chat-container::-webkit-scrollbar {
+  width: 10px; /* Slightly wider */
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: transparent; /* Transparent track */
+  margin: 4px 0; /* Add margin */
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background: var(--vscode-scrollbar-slider-background);
+  border-radius: 5px; /* Fully rounded */
+  border: 2px solid var(--vscode-input-background); /* Create padding effect */
+}
+.chat-container::-webkit-scrollbar-thumb:hover {
+  background: var(--vscode-scrollbar-slider-hover-background);
+}
+.chat-container::-webkit-scrollbar-thumb:active {
+  background: var(--vscode-scrollbar-slider-active-background);
+}
+
+/* Responsive adjustments (remove tails display:none) */
+@media (max-width: 600px) {
+  body {
+    padding: 12px;
+    height: calc(100vh - 24px);
+    gap: 12px;
+  }
+
+  .chat-container {
+      padding: 12px;
+  }
+
+  .user-message, .assistant-message {
+    max-width: 90%;
+    /* Removed margin: 0; as flex gap handles spacing */
+  }
+  /* Removed rule for ::after, ::before as they are gone */
+}
+
+/* Optional: Add subtle transition to background changes */
+#prompt, .model-selector, .fp, .gen-file-btn, .gen-all-file-btn {
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out, filter 0.15s ease-in-out;
+}

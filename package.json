@@ -15,11 +15,11 @@
     "commands": [
       {
         "command": "hm-code-assist.launchPanel",
-        "title": "Launch Panel"
+        "title": "hm-code-assist: Launch Panel"
       },
       {
         "command": "hm-code-assist.setGoogleApiKey",
-        "title": "Set Google API Key"
+        "title": "hm-code-assist: Set Google API Key"
       }
     ]
   },
@@ -45,6 +45,7 @@
   "dependencies": {
     "@langchain/core": "^0.3.43",
     "@langchain/google-genai": "^0.2.0",
+    "@vscode/vsce": "^3.3.2",
     "ollama": "^0.5.14"
   }
 }

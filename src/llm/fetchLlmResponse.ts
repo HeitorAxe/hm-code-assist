@@ -1,12 +1,7 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import * as vscode from "vscode";
-import { getOllama, transformToWords, simpleMessage, convertToLangchainMessages } from "./utils";
+import { getOllama, transformToWords, simpleMessage, convertToLangchainMessages, withTimeout } from "./utils";
 
-
-/**
- * Fetches a streamed LLM response and transforms it to yield one word at a time.
- * The delay between words is controlled by the `delayMs` parameter (default is 100ms).
- */
 export async function fetchLlmResponse(
     request: {
         provider: string,
@@ -17,9 +12,9 @@ export async function fetchLlmResponse(
         }[]
     },
     context: vscode.ExtensionContext,
-    delayMs: number = 2
-): Promise<AsyncIterable<string>>
-{
+    delayMs: number = 2,
+    timeoutMs: number = 30000
+): Promise<AsyncIterable<string>> {
     const { provider, model, messages } = request;
 
     if (provider === "google") {
@@ -32,23 +27,26 @@ export async function fetchLlmResponse(
             model: model,
             temperature: 0,
             apiKey: apiKey,
-            
         });
-        const streamResponse = await llm.stream(convertToLangchainMessages(messages));
-        return transformToWords(streamResponse, delayMs);
-    }
 
-    else if (provider === "ollama") {
+        const streamResponse = await withTimeout(
+            llm.stream(convertToLangchainMessages(messages)),
+            timeoutMs
+        );
+        return transformToWords(streamResponse, delayMs);
+    } else if (provider === "ollama") {
         const ollama = await getOllama();
-        const streamResponse = await ollama.chat({
-            model: model,
-            messages: messages,
-            stream: true,
-        });
-        return transformToWords(streamResponse, delayMs);
-    }
 
-    else {
+        const streamResponse = await withTimeout(
+            ollama.chat({
+                model: model,
+                messages: messages,
+                stream: true,
+            }),
+            timeoutMs
+        );
+        return transformToWords(streamResponse, delayMs);
+    } else {
         return transformToWords(simpleMessage("This model is not available"), delayMs);
     }
 }

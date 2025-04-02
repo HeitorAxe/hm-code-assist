@@ -1,71 +1,70 @@
-# hm-code-assist README
+# hm-code-assist
 
-This is the README for your extension "hm-code-assist". After writing up a brief description, we recommend including the following sections.
+**hm-code-assist** is a Visual Studio Code extension that brings advanced LLM chat functionality directly into your editor. It allows you to connect to Gemini models using your Google API key and to local Ollama models (which are auto-detected).
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **LLM Chat Interface**: Engage in interactive conversations with language models.
+- **Gemini Integration**: Connect to Gemini models by setting your Google API key.
+- **Ollama Auto-Detection**: Automatically detect and use local Ollama models.
+- **File Generation**: Generate and create files within your workspace directly from AI responses.
+- **Reasoning models UI Support**: Visualize the thought process of reasoning models.
 
-For example if there is an image subfolder under your extension project workspace:
+## Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+1. **Clone the Repository:**
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+   ```bash
+   git clone https://github.com/HeitorAxe/hm-code-assist
+   cd hm-code-assist
+   ```
 
-## Requirements
+2. **Install Dependencies:**
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+   ```bash
+   npm install
+   ```
 
-## Extension Settings
+3. **Build the Extension (if necessary):**
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+   ```bash
+   npm run compile
+   ```
 
-For example:
+## Running the Extension
 
-This extension contributes the following settings:
+The extension follows the default VSCode extension development workflow:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+1. Open the project folder in Visual Studio Code.
+2. Press `F5` to launch a new Extension Development Host window.
+3. In the new window, open the Command Palette with `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS) and type **"hm-code-assist: Launch Panel"** to initiate the chat interface.
 
-## Known Issues
+## Configuration
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Before using the extension, ensure you set up the required configurations:
 
-## Release Notes
+- **Google API Key for Gemini:**
+  - Open the VSCode settings (`Ctrl+,` or `Cmd+,` on macOS).
+  - Search for `hm-code-assist.googleApiKey`.
+  - Enter your Google API key to enable Gemini model integration.
 
-Users appreciate release notes as you update your extension.
+- **Ollama Models:**
+  - No manual configuration is required as the extension auto-detects local Ollama models.
 
-### 1.0.0
+## Usage
 
-Initial release of ...
+- **Starting a Chat Session:**
+  - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+  - Run **"hm-code-assist: Start Chat"** to open the LLM chat interface.
 
-### 1.0.1
+- **Generating Files:**
+  - Within the chat interface, prompt the AI to generate files. The extension will automatically create and add these files to your current workspace.
 
-Fixed issue #.
 
-### 1.1.0
+## License
 
-Added features X, Y, and Z.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
----
+## Support
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+If you encounter any issues or have feature requests, please open an issue in the [GitHub repository](https://github.com/HeitorAxe/hm-code-assist/issues).

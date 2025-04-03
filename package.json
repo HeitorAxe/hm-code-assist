@@ -1,6 +1,8 @@
 {
   "name": "hm-code-assist",
-  "displayName": "hm_code_assist",
+  "displayName": "HM Code Assistant",
+  "publisher": "HMCodeAssistant",
+  "icon": "icon.png",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -21,7 +23,39 @@
         "command": "hm-code-assist.setGoogleApiKey",
         "title": "hm-code-assist: Set Google API Key"
       }
-    ]
+    ],
+  "configuration": {
+    "title": "HM Code Assist Configuration",
+    "properties": {
+      "hmCodeAssist.llmModels": {
+        "type": "array",
+        "description": "List of available LLM models",
+        "default": [
+          {
+            "provider": "google",
+            "name": "gemini-2.0-flash"
+          },
+          {
+            "provider": "google",
+            "name": "gemini-2.5-pro-exp-03-25"
+          }
+        ],
+        "items": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "description": "Provider for the LLM model"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the LLM model"
+            }
+          }
+        }
+      }
+    }
+  }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -365,7 +365,6 @@ body {
 }
 
 .gen-all-file-btn::before {
-  content: "✨";
   font-size: 14px;
   transition: transform 0.2s ease;
 }

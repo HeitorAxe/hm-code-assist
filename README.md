@@ -73,7 +73,7 @@ To run a preview of the extension using the Visual Studio Code debugger:
    - In the **Extension Development Host** window, open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
    - Type and select **"hm-code-assist: Launch Panel"** to initiate the LLM chat interface.
 
-This process allows you to test and debug your extension in an environment that simulates how user[s will experience](https://github.com/HeitorAxe/hm-code-assist/issues) it. You can set breakpoints, inspect variables, and step through your code to diagnose and fix issues.
+This process allows you to test and debug your extension in an environment that simulates how users will experience it. You can set breakpoints, inspect variables, and step through your code to diagnose and fix issues.
 
 ## Configuration
 
@@ -84,6 +84,23 @@ Before using the extension, ensure you set up the required configurations:
   - Run **"hm-code-assist: Set Google API Key"** and paste your API Key.
 - **Ollama Models:**
   - No manual configuration is required as the extension auto-detects local Ollama models.
+
+### Customizing Available Models
+
+You can edit the list of available models by modifying your VSCode settings. Navigate to the settings (`Ctrl+,` or `Cmd+,` on macOS) and search for `hmCodeAssist.llmModels`. You can manually update the list of models by adding or modifying entries in your `settings.json` file:
+
+```json
+"hmCodeAssist.llmModels": [
+    {
+        "provider": "google",
+        "name": "gemini-2.0-flash"
+    },
+    {
+        "provider": "google",
+        "name": "gemini-2.5-pro-exp-03-25"
+    }
+]
+```
 
 ## Usage
 

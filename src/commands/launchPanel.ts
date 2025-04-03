@@ -6,24 +6,24 @@ import { listOllamaModels } from "../llm/utils";
 
 export function registerLaunchPanel(context: vscode.ExtensionContext): vscode.Disposable {
     return vscode.commands.registerCommand("hm-code-assist.launchPanel", async () => {
-        const panel = vscode.window.createWebviewPanel(
-            "hm-code-assist",
-            "AI Assistant",
-            vscode.ViewColumn.Two,
-            { enableScripts: true, retainContextWhenHidden: true }
-        );
 
-        panel.webview.html = getWebViewContent(context, panel);
-        
-        let llmModels = [{
-                provider: "google",
-                name:"gemini-2.0-flash"
-            },
-            {
-                provider: "google",
-                name:"gemini-2.5-pro-exp-03-25"
-            }
-        ];
+        let llmModels: { provider: string; name: string }[] = [];
+
+        const updateLLMModels = () => {
+            const config = vscode.workspace.getConfiguration("hmCodeAssist");
+            llmModels = config.get<{ provider: string; name: string }[]>("llmModels", []);
+        };
+    
+        updateLLMModels();
+    
+        context.subscriptions.push(
+            vscode.workspace.onDidChangeConfiguration(e => {
+                if (e.affectsConfiguration("hmCodeAssist.llmModels")) {
+                    updateLLMModels();
+                    vscode.window.showInformationMessage("LLM models updated from configuration.");
+                }
+            })
+        );
         
         try{
             const ollamaModels = await listOllamaModels();
@@ -32,13 +32,22 @@ export function registerLaunchPanel(context: vscode.ExtensionContext): vscode.Di
             vscode.window.showInformationMessage("Could not connect to Ollama");
         }
 
+        const panel = vscode.window.createWebviewPanel(
+            "hm-code-assist",
+            "AI Assistant",
+            vscode.ViewColumn.Two,
+            { enableScripts: true, retainContextWhenHidden: true }
+        );
+
+        panel.webview.html = getWebViewContent(context, panel);
+
         panel.webview.postMessage({ 
             command: "loadData", 
             data: {
                 models: llmModels
             }
         });
-
+        
         const messages = [
             { role: 'system', content: `
                 You are a helpful assistant and you follow the rules.
@@ -93,7 +102,7 @@ export function registerLaunchPanel(context: vscode.ExtensionContext): vscode.Di
 
                         for await (const part of streamResponse) {
                             responseText += part;
-                            console.log(part);
+                            //console.log(part);
                             panel.webview.postMessage({ command: "chatResponse", text: responseText });
                         }
                         messages.push({
